@@ -209,6 +209,8 @@ function PointsAdjustments() {
     }
     setDefaultTxt(`${betPoints} serão usados.`)
     setPointsScreenContent(`${betPoints} pontos serão usados.`)
+    console.log(defaultTxt)
+    setPointsCount(100)
   }, [])
   useEffect(()=> {
     if (betPoints>=pointsCount){
