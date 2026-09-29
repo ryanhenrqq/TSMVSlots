@@ -26,6 +26,9 @@ function MainContainerView() {
   const [statusRodada, setStatusRodada] = useState('STATUS VAZIO')
 
   const handleRoll = () => {
+    if (typeof window !== "undefined" && "vibrate" in navigator) {
+        navigator.vibrate(300);
+    }
     setRunningSlot(true)
     setSlotOne(Math.floor(Math.random() * 10))
     setSlotTwo(Math.floor(Math.random() * 10))
@@ -48,6 +51,9 @@ function MainContainerView() {
       setSlotOne(n1)
       setSlotTwo(n2)
       setSlotThree(n3)     
+      if (typeof window !== "undefined" && "vibrate" in navigator) {
+        navigator.vibrate(15);
+      }
       timeoutCall = setTimeout(randomizer, speed)
     }
     timeoutCall = setTimeout(randomizer, speed)
