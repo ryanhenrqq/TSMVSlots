@@ -61,6 +61,11 @@ function MainContainerView() {
         setRunningSlot(false)
       }
     }, 1000)
+
+    return () => {
+      clearTimeout(timeoutCall)
+      clearInterval(counter)
+    }
   }, [runningSlot])
 
   const handleAnalysis = (n1: number, n2: number, n3: number) => {
