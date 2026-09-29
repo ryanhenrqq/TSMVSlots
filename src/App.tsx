@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 
 import machinesImage from './assets/machines.jpg'
@@ -18,6 +18,9 @@ function MainContainerView() {
   const [slotOne, setSlotOne] = useState(0)
   const [slotTwo, setSlotTwo] = useState(0)
   const [slotThree, setSlotThree] = useState(0)
+  const slotsCurrentRef = useRef({n1: 0, n2: 0, n3: 0})
+
+
   const [finalNumber, setFinalNumber] = useState('')
   const [runningSlot, setRunningSlot] = useState(false)
   const [statusRodada, setStatusRodada] = useState('STATUS VAZIO')
@@ -38,33 +41,30 @@ function MainContainerView() {
 
     const randomizer = () => {
       speed +=20
-      console.log(speed, time)
       let n1 = Math.floor(Math.random() * 10)
       let n2 = Math.floor(Math.random() * 10)
       let n3 = Math.floor(Math.random() * 10)
+      slotsCurrentRef.current = {n1,n2,n3}
       setSlotOne(n1)
       setSlotTwo(n2)
       setSlotThree(n3)     
-      if (time<=0) {
-        setTimeout(() => {
-          handleAnalysis(n1, n2, n3)
-        }, 500);
-        return
-      }
       timeoutCall = setTimeout(randomizer, speed)
     }
     timeoutCall = setTimeout(randomizer, speed)
     const counter = setInterval(() => {
       time-=1
       if (time<=0) {
+        const {n1,n2,n3} = slotsCurrentRef.current
         clearInterval(counter)
         setRunningSlot(false)
+        setTimeout(() => {
+          handleAnalysis(n1, n2, n3)
+        }, 500);
       }
     }, 1000)
 
     return () => {
       clearTimeout(timeoutCall)
-      clearInterval(counter)
     }
   }, [runningSlot])
 
@@ -89,6 +89,7 @@ function MainContainerView() {
 
   useEffect(() => {
     setFinalNumber(`${slotOne}${slotTwo}${slotThree}`)
+    console.log(finalNumber)
   }, [slotOne, slotTwo, slotThree])
 
   return(
@@ -97,7 +98,10 @@ function MainContainerView() {
         <h1>TSMV</h1>
         <i>slots</i>
       </div>
-      
+      <div className="infos-header-screen">
+        {statusRodada!=''?<div>{statusRodada}</div>:<div>GIRANDO...</div>}
+        
+      </div>
       <div className="flex-hor slot-upp">
         <div>{slotOne}</div>
         <div>{slotTwo}</div>
@@ -117,7 +121,7 @@ function MainContainerView() {
       </div>
       
       <div>{finalNumber} - numero final debug</div>
-      <div>{statusRodada}</div>
+      
     </div>
   )
 }
