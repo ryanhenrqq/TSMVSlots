@@ -94,19 +94,22 @@ function MainContainerView() {
 
   return(
     <div className="container">
+
       <div className="title">
         <h1>TSMV</h1>
         <i>slots</i>
       </div>
+
       <div className="infos-header-screen">
         {statusRodada!=''?<div>{statusRodada}</div>:<div>GIRANDO...</div>}
-        
       </div>
+
       <div className="flex-hor slot-upp">
         <div>{slotOne}</div>
         <div>{slotTwo}</div>
         <div>{slotThree}</div>
       </div>
+
       <div className="flex-hor">
         <div className="act-button-border">
           <button className='act-button' onClick={handleRoll} disabled={runningSlot}>
@@ -120,8 +123,7 @@ function MainContainerView() {
         </div>
       </div>
       
-      <div>{finalNumber} - numero final debug</div>
-      
+      <PointsAdjustments />
     </div>
   )
 }
@@ -163,6 +165,72 @@ function FloatingStats() {
       }
       
     </>
+  )
+}
+
+function PointsAdjustments() {
+  const [defaultTxt, setDefaultTxt] = useState('Houve um problema com esse script.')
+  const [pointsScreenContent, setPointsScreenContent] = useState('')
+  const [pointsCount, setPointsCount] = useState(100)
+  const [betPoints, setBetPoints] = useState(10)
+  const [disabMin, setDisableMin] = useState(true)
+  const [disabMax, setDisableMax] = useState(false)
+
+  const handlePointAdj = (act: number) => {
+    if (act==0){
+      if (betPoints<=10){
+        setDisableMin(true)
+        console.log(betPoints, pointsCount) //debug
+        return
+      } else {
+        setDisableMin(false)
+      }
+      console.log(betPoints, pointsCount) //debug
+      betPoints>=10?setBetPoints(betPoints-5):console.log('erro')
+    } else if (act==1) {
+      if (betPoints>=pointsCount){
+        setDisableMax(true)
+        console.log(betPoints, pointsCount) //debug
+        return
+      } else {
+        setDisableMax(false)
+      }
+      console.log(betPoints, pointsCount) //debug
+      betPoints<=pointsCount?setBetPoints(betPoints+5):console.log('erro')
+    }
+    setPointsScreenContent(`${betPoints} pontos serão usados.`)
+  }
+
+  useEffect(() => {
+    if (betPoints>=pointsCount){
+      setDisableMax(true)
+    } else if (betPoints<=10||betPoints<=pointsCount){
+      setDisableMin(true)
+    }
+    setDefaultTxt(`${betPoints} serão usados.`)
+    setPointsScreenContent(`${betPoints} pontos serão usados.`)
+  }, [])
+  useEffect(()=> {
+    if (betPoints>=pointsCount){
+      setDisableMax(true)
+    } else {
+      setDisableMax(false)
+    }
+    if (betPoints<=10||betPoints>=pointsCount){
+      setDisableMin(true)
+    } else {
+      setDisableMin(false)
+    }
+    setPointsScreenContent(`${betPoints} pontos serão usados.`)
+  }, [betPoints])
+  return(
+    <div className='flex-hor footer-slot-btns'>
+      <button className="points-btn-down" onClick={()=> handlePointAdj(0)} disabled={disabMin}>-</button>
+      <div className="points-display-req">
+        <span>{pointsScreenContent}</span>
+      </div>
+      <button className="points-btn-up" onClick={()=> handlePointAdj(1)} disabled={disabMax}>+</button>
+    </div>
   )
 }
 
